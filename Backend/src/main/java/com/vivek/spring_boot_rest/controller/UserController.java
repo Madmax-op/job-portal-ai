@@ -83,24 +83,42 @@ public class UserController {
             System.out.println("User found: " + loginDto.getUsername() + " with role: " + dbUser.getRole());
             
             // Test password matching manually
+            System.out.println("Raw password from request: " + loginDto.getPassword());
+            System.out.println("Encoded password from DB: " + dbUser.getPassword());
             boolean passwordMatches = service.checkPassword(loginDto.getPassword(), dbUser.getPassword());
             System.out.println("Password matches: " + passwordMatches);
             
-            Authentication authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
-
-            if (authentication.isAuthenticated()) {
+            // Use manual password check instead of AuthenticationManager
+            if (passwordMatches) {
                 String token = jwtService.generateToken(loginDto.getUsername(), dbUser.getRole());
                 System.out.println("Login successful for user: " + loginDto.getUsername());
                 return token;
             } else {
-                System.out.println("Login failed for user: " + loginDto.getUsername() + " - authentication not successful");
+                System.out.println("Login failed for user: " + loginDto.getUsername() + " - password does not match");
                 return "Login Failed";
             }
         } catch (Exception e) {
             System.err.println("Login error for user " + loginDto.getUsername() + ": " + e.getMessage());
             e.printStackTrace();
             return "Login Failed";
+        }
+    }
+    
+    // Test endpoint to verify password (remove this in production)
+    @PostMapping("/test-password")
+    public String testPassword(@RequestBody LoginDto loginDto) {
+        try {
+            User dbUser = service.findByUsername(loginDto.getUsername());
+            if (dbUser == null) {
+                return "User not found";
+            }
+            
+            boolean passwordMatches = service.checkPassword(loginDto.getPassword(), dbUser.getPassword());
+            return "Password matches: " + passwordMatches + 
+                   "\nRaw password: " + loginDto.getPassword() + 
+                   "\nEncoded password: " + dbUser.getPassword();
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
         }
     }
 }

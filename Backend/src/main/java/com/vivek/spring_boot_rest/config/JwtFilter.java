@@ -33,6 +33,7 @@ public class JwtFilter extends OncePerRequestFilter {
         "/",
         "/api/users/register",
         "/api/users/login", 
+        "/api/users/test-password",
         "/api/jobs/all"
     );
 

@@ -114,6 +114,7 @@ export async function loginUser(username, password) {
   showSpinner(true);
   try {
     console.log('Attempting login for user:', username);
+    console.log('Password being sent:', password);
     const res = await fetch(`${API_BASE}/api/users/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

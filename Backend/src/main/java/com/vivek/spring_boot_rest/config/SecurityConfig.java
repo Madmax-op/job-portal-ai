@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/", "/api/users/register", "/api/users/login", "/api/jobs/all").permitAll()
+                        .requestMatchers("/", "/api/users/register", "/api/users/login", "/api/users/test-password", "/api/jobs/all").permitAll()
                         .requestMatchers("/api/jobs/post", "/api/jobs/post/**").hasAnyAuthority("ADMIN", "RECRUITER")
                         .requestMatchers("/api/jobs/delete", "/api/jobs/delete/**", "/api/jobs/update", "/api/jobs/update/**")
                         .hasAuthority("ADMIN")
