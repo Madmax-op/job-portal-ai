@@ -55,8 +55,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/resumes/jobs/{jobId}/candidates").hasAnyAuthority("ADMIN", "RECRUITER")
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return  http.build();
     }
 
@@ -76,5 +75,18 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", configuration);
         return source;
+    }
+
+    @Bean
+    public SecurityFilterChain authenticatedFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/api/jobs/post/**", "/api/jobs/delete/**", "/api/jobs/update/**", 
+                                "/api/resumes/upload", "/api/resumes/jobs/**", "/api/resumes/my-summary")
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(customizer -> customizer.disable())
+                .authorizeHttpRequests(request -> request.anyRequest().authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
     }
 }
