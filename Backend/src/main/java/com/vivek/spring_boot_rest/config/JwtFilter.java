@@ -29,6 +29,14 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        // Skip JWT processing for permitAll endpoints
+        String requestURI = request.getRequestURI();
+        if (requestURI.equals("/api/users/register") || requestURI.equals("/api/users/login") || 
+            requestURI.equals("/api/jobs/all") || requestURI.equals("/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String userName = null;
