@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Portal - All Jobs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+  <nav class="bg-white shadow p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-blue-600">Job Portal</h1>
+    <div class="flex items-center space-x-4">
+      <span id="userInfo" class="text-gray-700"></span>
+      <div id="aiFeatures" class="hidden space-x-2">
+        <button id="toggleResumeUpload" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Upload Resume</button>
+        <a href="candidate-matching.html" class="hidden bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition">AI Matching</a>
+      </div>
+      <button id="logoutBtn" class="hidden bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">Logout</button>
+    </div>
+  </nav>
+  <main class="flex-1 flex flex-col items-center p-4">
+    <div id="toast" class="fixed top-4 right-4 z-50 hidden"></div>
+    
+    <!-- Resume Upload Section -->
+    <div id="resumeUploadSection" class="hidden w-full max-w-4xl mb-8">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Upload Your Resume</h3>
+        <div class="space-y-4">
+          <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+            <div class="text-gray-400 mb-2">
+              <svg class="mx-auto h-12 w-12" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+            <div class="text-sm text-gray-600">
+              <label for="resumeFile" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                <span>Upload a file</span>
+                <input id="resumeFile" name="resumeFile" type="file" class="sr-only" accept=".pdf,.docx" />
+              </label>
+              <p class="pl-1">or drag and drop</p>
+            </div>
+            <p class="text-xs text-gray-500">PDF, DOCX up to 10MB</p>
+          </div>
+          <div id="fileInfo" class="hidden text-sm text-gray-600"></div>
+          <div class="flex justify-end">
+            <button id="uploadResumeBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+              Upload & Parse Resume
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resume Summary Section - Always Visible for Reference -->
+    <div id="resumeSummarySection" class="w-full max-w-4xl mb-8">
+      <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-bold text-gray-800 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+            </svg>
+            Your Resume Summary
+          </h3>
+          <div class="flex space-x-2">
+            <button id="refreshResumeSummary" class="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600 transition">
+              Refresh
+            </button>
+          </div>
+        </div>
+        <div id="noResumeMessage" class="text-center py-8 text-gray-500">
+          <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <p class="text-lg font-medium">No Resume Uploaded Yet</p>
+          <p class="text-sm">Upload your resume to see AI analysis and skills extraction</p>
+        </div>
+        <div id="resumeContent" class="hidden space-y-4">
+          <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+            <h4 class="font-semibold text-blue-700 mb-2 flex items-center">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+              AI Analysis Summary
+            </h4>
+            <p id="aiSummaryText" class="text-gray-700 text-sm leading-relaxed"></p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+              <h4 class="font-semibold text-green-700 mb-2 flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+                Extracted Skills
+              </h4>
+              <div id="skillsContainer" class="flex flex-wrap gap-2"></div>
+            </div>
+            <div class="bg-purple-50 rounded-lg p-4 border border-purple-200">
+              <h4 class="font-semibold text-purple-700 mb-2 flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd" />
+                  <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
+                </svg>
+                Experience
+              </h4>
+              <p id="experienceText" class="text-gray-700 text-sm"></p>
+            </div>
+          </div>
+          <div class="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+            <h4 class="font-semibold text-yellow-700 mb-2 flex items-center">
+              <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838l-2.727 1.17 1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+              </svg>
+              Education
+            </h4>
+            <p id="educationText" class="text-gray-700 text-sm"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-between items-center w-full max-w-6xl mb-4">
+      <h2 class="text-xl font-semibold">All Job Listings</h2>
+      <button id="addJobBtn" class="hidden bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Add Job</button>
+    </div>
+    <div id="spinner" class="flex justify-center items-center my-8">
+      <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid"></div>
+    </div>
+    <div id="jobsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-6xl"></div>
+  </main>
+  <script>
+    // Redirect to register.html on homepage load if not logged in
+    if (
+      (window.location.pathname === '/' || window.location.pathname === '/index.html') &&
+      !localStorage.getItem('jwt')
+    ) {
+      window.location.replace('/register.html');
+    }
+  </script>
+  <script type="module" src="/js/index.js"></script>
+</body>
+</html> 

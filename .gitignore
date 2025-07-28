@@ -1,0 +1,36 @@
+# Ignore environment and secrets
+.env
+.env.*
+
+# Ignore IDE/editor configs
+.idea/
+.vscode/
+*.iml
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore build and dependency artifacts
+/node_modules/
+/dist/
+/build/
+/target/
+*.log
+
+# Ignore Docker volumes and uploads
+/uploads/
+*.pid
+
+# Ignore database files
+*.db
+*.sqlite
+
+# Ignore test output
+/test-output/
+/coverage/
+
+# Ignore sensitive files
+*.pem
+*.key
+*.crt 

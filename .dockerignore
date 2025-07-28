@@ -1,0 +1,21 @@
+# Backend
+Backend/target/
+!Backend/target/job-portal-backend.jar
+Backend/.mvn/
+Backend/.idea/
+Backend/HELP.md
+Backend/README.md
+Backend/.gitignore
+
+# Frontend
+Frontend/node_modules/
+Frontend/.idea/
+Frontend/README.md
+Frontend/tailwind.config.js
+
+# General
+.git
+.idea
+*.iml
+*.log
+*.md 
