@@ -40,9 +40,11 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         
         String requestURI = request.getRequestURI();
+        System.out.println("JWT Filter processing request: " + requestURI);
         
         // Skip JWT processing for permitAll endpoints
         if (PERMIT_ALL_ENDPOINTS.contains(requestURI)) {
+            System.out.println("Skipping JWT processing for permitAll endpoint: " + requestURI);
             filterChain.doFilter(request, response);
             return;
         }
@@ -69,7 +71,8 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         } catch (Exception e) {
             // Log the exception but don't block the request
-            logger.error("Error processing JWT token: " + e.getMessage());
+            System.err.println("Error processing JWT token: " + e.getMessage());
+            e.printStackTrace();
         }
 
         filterChain.doFilter(request, response);

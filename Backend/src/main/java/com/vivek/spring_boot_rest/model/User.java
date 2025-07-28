@@ -1,9 +1,11 @@
 package com.vivek.spring_boot_rest.model;
 
-import jakarta.persistence.*;import lombok.Data;
+import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Table(name="users")
+@Data
 public class User {
 
     @Id
@@ -16,7 +18,7 @@ public class User {
     @Column(nullable = false)
     private String role = "USER";
     
-    // Manual getters and setters
+    // Manual getters and setters for compatibility
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     

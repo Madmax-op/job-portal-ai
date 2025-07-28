@@ -113,12 +113,15 @@ export async function loginUser(username, password) {
   // No email validation for login, username can be any string
   showSpinner(true);
   try {
+    console.log('Attempting login for user:', username);
     const res = await fetch(`${API_BASE}/api/users/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     });
+    console.log('Login response status:', res.status);
     const token = await res.text();
+    console.log('Login response body:', token);
     showSpinner(false);
     if (res.ok && token && !token.includes('Login Failed')) {
       saveJWT(token);
@@ -128,6 +131,7 @@ export async function loginUser(username, password) {
       showToast('Login failed', 'error');
     }
   } catch (e) {
+    console.error('Login error:', e);
     showSpinner(false);
     showToast('Network error', 'error');
   }

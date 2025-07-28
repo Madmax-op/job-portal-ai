@@ -12,15 +12,25 @@ public class UserService {
     @Autowired
     private UserRepo repo;
 
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     public User saveUser(User user){
-        user.setPassword(encoder.encode(user.getPassword()));
+        System.out.println("Saving user: " + user.getUsername() + " with role: " + user.getRole());
+        String rawPassword = user.getPassword();
+        String encodedPassword = encoder.encode(rawPassword);
+        System.out.println("Password encoded for user: " + user.getUsername());
+        user.setPassword(encodedPassword);
         // role is already set in controller
-        return repo.save(user);
+        User savedUser = repo.save(user);
+        System.out.println("User saved successfully: " + savedUser.getUsername());
+        return savedUser;
     }
 
     public User findByUsername(String username) {
         return repo.findByUsername(username).orElse(null);
+    }
+    
+    public boolean checkPassword(String rawPassword, String encodedPassword) {
+        return encoder.matches(rawPassword, encodedPassword);
     }
 }
