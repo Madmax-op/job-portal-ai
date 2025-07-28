@@ -1,14 +1,10 @@
 package com.vivek.spring_boot_rest.controller;
 
 import java.util.List;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.vivek.spring_boot_rest.model.JobPost;
 import com.vivek.spring_boot_rest.service.JobService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 @CrossOrigin(origins = {"http://localhost", "http://localhost:80", "http://frontend:80", "https://job-portal-ai-frontend.onrender.com"}, allowCredentials = "true")
 @RequestMapping("/api/jobs")

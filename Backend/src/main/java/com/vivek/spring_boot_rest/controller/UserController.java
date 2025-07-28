@@ -41,25 +41,37 @@ public class UserController {
 
     @PostMapping("/register")
     public User register(@RequestBody UserDto userDto) {
-        // Validate role
-        String role = userDto.role != null ? userDto.role.toUpperCase() : "USER";
-        if (!role.equals("USER") && !role.equals("RECRUITER")) {
-            throw new IllegalArgumentException("Invalid role. Only USER and RECRUITER roles are allowed for registration.");
+        try {
+            // Validate role
+            String role = userDto.role != null ? userDto.role.toUpperCase() : "USER";
+            if (!role.equals("USER") && !role.equals("RECRUITER")) {
+                throw new IllegalArgumentException("Invalid role. Only USER and RECRUITER roles are allowed for registration.");
+            }
+            
+            // Create User entity from DTO
+            User user = new User();
+            user.setUsername(userDto.username);
+            user.setPassword(userDto.password);
+            user.setEmail(userDto.email);
+            user.setRole(role);
+            User savedUser = service.saveUser(user);
+            
+            // Send welcome email (works with Gmail App Password or any SMTP)
+            // For Gmail, use an App Password instead of your real password
+            String subject = "Welcome to Job Portal!";
+            String body = "Hello " + userDto.username + ",\n\nThank you for registering at Job Portal as a " + role + ". We're excited to have you on board!\n\nBest regards,\nJob Portal Team";
+            try {
+                emailService.sendEmail(userDto.email, subject, body);
+            } catch (Exception e) {
+                // Log email error but don't fail registration
+                System.err.println("Failed to send welcome email: " + e.getMessage());
+            }
+            
+            return savedUser;
+        } catch (Exception e) {
+            System.err.println("Registration error: " + e.getMessage());
+            throw e;
         }
-        
-        // Create User entity from DTO
-        User user = new User();
-        user.setUsername(userDto.username);
-        user.setPassword(userDto.password);
-        user.setEmail(userDto.email);
-        user.setRole(role);
-        User savedUser = service.saveUser(user);
-        // Send welcome email (works with Gmail App Password or any SMTP)
-        // For Gmail, use an App Password instead of your real password
-        String subject = "Welcome to Job Portal!";
-        String body = "Hello " + userDto.username + ",\n\nThank you for registering at Job Portal as a " + role + ". We're excited to have you on board!\n\nBest regards,\nJob Portal Team";
-        emailService.sendEmail(userDto.email, subject, body);
-        return savedUser;
     }
 
     @PostMapping("/login")

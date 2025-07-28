@@ -1,6 +1,5 @@
 package com.vivek.spring_boot_rest.config;
 
-import jakarta.servlet.Filter;
 import com.vivek.spring_boot_rest.config.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +16,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -41,8 +39,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain  securityFilterChain (HttpSecurity http) throws Exception {
-
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(customizer -> customizer.disable())
@@ -55,8 +52,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/resumes/jobs/{jobId}/candidates").hasAnyAuthority("ADMIN", "RECRUITER")
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        return  http.build();
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authProvider())
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
     }
 
     @Bean
@@ -75,18 +74,5 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", configuration);
         return source;
-    }
-
-    @Bean
-    public SecurityFilterChain authenticatedFilterChain(HttpSecurity http) throws Exception {
-        http
-                .securityMatcher("/api/jobs/post/**", "/api/jobs/delete/**", "/api/jobs/update/**", 
-                                "/api/resumes/upload", "/api/resumes/jobs/**", "/api/resumes/my-summary")
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(customizer -> customizer.disable())
-                .authorizeHttpRequests(request -> request.anyRequest().authenticated())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        return http.build();
     }
 }
