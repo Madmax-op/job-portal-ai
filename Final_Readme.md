@@ -109,5 +109,3 @@ A full-stack, containerized job portal leveraging Spring Boot, PostgreSQL, JWT, 
 - Spring Boot, Spring Security, PostgreSQL, Docker, Tailwind CSS, OpenAI API
 
 ---
-
-**© 2024 – For educational and demonstration use.** 

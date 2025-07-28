@@ -2,10 +2,10 @@
 FROM nginx:alpine
 
 # Copy the frontend files to nginx's default serving directory
-COPY . /usr/share/nginx/html/
+COPY Frontend/. /usr/share/nginx/html/
 
 # Copy custom nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY Frontend/nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80
 EXPOSE 80
