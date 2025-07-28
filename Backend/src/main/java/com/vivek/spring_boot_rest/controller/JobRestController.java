@@ -10,7 +10,7 @@ import com.vivek.spring_boot_rest.service.JobService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-@CrossOrigin(origins = {"http://localhost", "http://localhost:80", "http://frontend:80"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost", "http://localhost:80", "http://frontend:80", "https://job-portal-ai-frontend.onrender.com"}, allowCredentials = "true")
 @RequestMapping("/api/jobs")
 @RestController
 public class JobRestController {

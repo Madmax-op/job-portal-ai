@@ -22,7 +22,7 @@ class UserDto {
     public String role = "USER";
 }
 
-@CrossOrigin(origins = {"http://localhost", "http://localhost:80", "http://frontend:80"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost", "http://localhost:80", "http://frontend:80", "https://job-portal-ai-frontend.onrender.com"}, allowCredentials = "true")
 @RequestMapping("/api/users")
 @RestController
 public class UserController {

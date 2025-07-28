@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/resumes")
-@CrossOrigin(origins = {"http://localhost", "http://localhost:80", "http://frontend:80"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost", "http://localhost:80", "http://frontend:80", "https://job-portal-ai-frontend.onrender.com"}, allowCredentials = "true")
 @Slf4j
 public class ResumeController {
 
