@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -28,6 +30,22 @@ public class UserService {
 
     public User findByUsername(String username) {
         return repo.findByUsername(username).orElse(null);
+    }
+    
+    public User findByUsernameAndPassword(String username, String rawPassword) {
+        List<User> users = repo.findAllByUsername(username);
+        if (users.isEmpty()) {
+            return null;
+        }
+        
+        // Try to match password with any of the users with this username
+        for (User user : users) {
+            if (encoder.matches(rawPassword, user.getPassword())) {
+                return user;
+            }
+        }
+        
+        return null;
     }
     
     public boolean checkPassword(String rawPassword, String encodedPassword) {

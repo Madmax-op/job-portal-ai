@@ -73,30 +73,19 @@ public class UserController {
         try {
             System.out.println("Login attempt for user: " + loginDto.getUsername());
             
-            // First, let's check if the user exists
-            User dbUser = service.findByUsername(loginDto.getUsername());
+            // Find user with matching username and password
+            User dbUser = service.findByUsernameAndPassword(loginDto.getUsername(), loginDto.getPassword());
             if (dbUser == null) {
-                System.out.println("User not found: " + loginDto.getUsername());
+                System.out.println("User not found or password incorrect: " + loginDto.getUsername());
                 return "Login Failed";
             }
             
-            System.out.println("User found: " + loginDto.getUsername() + " with role: " + dbUser.getRole());
+            System.out.println("User found: " + loginDto.getUsername() + " with role: " + dbUser.getRole() + " (Email: " + dbUser.getEmail() + ")");
             
-            // Test password matching manually
-            System.out.println("Raw password from request: " + loginDto.getPassword());
-            System.out.println("Encoded password from DB: " + dbUser.getPassword());
-            boolean passwordMatches = service.checkPassword(loginDto.getPassword(), dbUser.getPassword());
-            System.out.println("Password matches: " + passwordMatches);
-            
-            // Use manual password check instead of AuthenticationManager
-            if (passwordMatches) {
-                String token = jwtService.generateToken(loginDto.getUsername(), dbUser.getRole());
-                System.out.println("Login successful for user: " + loginDto.getUsername());
-                return token;
-            } else {
-                System.out.println("Login failed for user: " + loginDto.getUsername() + " - password does not match");
-                return "Login Failed";
-            }
+            // Generate JWT token
+            String token = jwtService.generateToken(loginDto.getUsername(), dbUser.getRole());
+            System.out.println("Login successful for user: " + loginDto.getUsername());
+            return token;
         } catch (Exception e) {
             System.err.println("Login error for user " + loginDto.getUsername() + ": " + e.getMessage());
             e.printStackTrace();
@@ -108,13 +97,15 @@ public class UserController {
     @PostMapping("/test-password")
     public String testPassword(@RequestBody LoginDto loginDto) {
         try {
-            User dbUser = service.findByUsername(loginDto.getUsername());
+            User dbUser = service.findByUsernameAndPassword(loginDto.getUsername(), loginDto.getPassword());
             if (dbUser == null) {
-                return "User not found";
+                return "User not found or password incorrect";
             }
             
-            boolean passwordMatches = service.checkPassword(loginDto.getPassword(), dbUser.getPassword());
-            return "Password matches: " + passwordMatches + 
+            return "Password matches: true" + 
+                   "\nEmail: " + dbUser.getEmail() +
+                   "\nUsername: " + dbUser.getUsername() +
+                   "\nRole: " + dbUser.getRole() +
                    "\nRaw password: " + loginDto.getPassword() + 
                    "\nEncoded password: " + dbUser.getPassword();
         } catch (Exception e) {
